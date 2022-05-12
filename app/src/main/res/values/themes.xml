@@ -16,7 +16,7 @@
         <item name="android:textSize">20sp</item>
         <item name="fontFamily">sans-serif-black</item>
         <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
-
+        <item name="android:windowBackground">@color/window_background_color</item>
         <item name="android:windowAnimationStyle">@style/fade_anim_transition</item>
 
     </style>

@@ -11,9 +11,12 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.pourkazemi.mahdi.mymaktabplus.R
 import com.pourkazemi.mahdi.mymaktabplus.data.localdetabase.data_store.PreferencesInfo
+import com.pourkazemi.mahdi.mymaktabplus.databinding.ActivityMainBinding
+import com.pourkazemi.mahdi.mymaktabplus.databinding.FragmentSettingBinding
 import com.pourkazemi.mahdi.mymaktabplus.util.logger
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
@@ -22,19 +25,22 @@ import kotlinx.coroutines.runBlocking
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-    private val navController by lazy {
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.FCcontainer) as NavHostFragment
-        navHostFragment.navController
-    }
-
+    private lateinit var binding: ActivityMainBinding
     private val viewModel: MainViewModel by viewModels()
+    lateinit var navController: NavController
 
+    /* private val navController by lazy {
+         val navHostFragment = supportFragmentManager.findFragmentById(R.id.FCcontainer) as NavHostFragment
+         navHostFragment.navController
+     }
+ */
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         preferencesInit()
+        navController = (supportFragmentManager.findFragmentById(R.id.FCcontainer) as NavHostFragment).navController
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -55,9 +61,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun preferencesInit() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                val info = viewModel.preferences.first()
+        lifecycleScope.launchWhenCreated {
+            /* repeatOnLifecycle(Lifecycle.State.CREATED) {*/
+            viewModel.preferences.collect { info ->
                 logger("theme: ${info.theme} , lang: ${info.lang}")
 
                 val mode = info.theme.mode
@@ -66,6 +72,7 @@ class MainActivity : AppCompatActivity() {
                 if (currentMode != mode) {
                     AppCompatDelegate.setDefaultNightMode(mode)
                 }
+                //   }
             }
         }
         // job.join()

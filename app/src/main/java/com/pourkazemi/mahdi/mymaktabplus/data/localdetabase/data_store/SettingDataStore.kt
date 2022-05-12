@@ -26,7 +26,7 @@ class SettingDataStore @Inject constructor(
     val preferences: Flow<PreferencesInfo> = dataStore.data.catch { cause ->
         Log.e("datastore_error", cause.message.toString())
     }.map { preference ->
-        val theme: Theme = Theme.valueOf(preference[SettingPreferencesKey.KEY_THEME] ?: Theme.AUTO.name)
+        val theme: Theme = Theme.valueOf(preference[SettingPreferencesKey.KEY_THEME] ?: Theme.LIGHT.name)
         val lang: Lang = Lang.valueOf(preference[SettingPreferencesKey.KEY_LANG] ?: Lang.ENGLISH.name)
         PreferencesInfo(
             theme = theme,
